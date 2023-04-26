@@ -58,23 +58,13 @@ class TotalNumberPlaysPerSong:
         return data
 
 
-class WriteDataFrameToCsv:
-    def write(self, data: pd.DataFrame, file_dir: str) -> None:
-        """Writes a dataframe to a csv file.
-        Time complexity: O(1)
-        """
-        uid = uuid.uuid4().hex
-        new_file_dir = f"songs-output-{uid}.csv"
-        data.to_csv(new_file_dir)
-
-
 class GroupSongsPlaysPerDay:
     def generate_csv(
         self,
         file_dir: str,
         delimiter: str = ",",
         required_columns: List[str] = default_cols,
-    ) -> None:
+    ) -> Any:
         """Generates a csv file with the total number of plays per song.
         The file is saved in the same directory as the original file.
 
@@ -86,5 +76,5 @@ class GroupSongsPlaysPerDay:
         total_number_per_song = TotalNumberPlaysPerSong().total_number_per_song(
             csv_data
         )
-        WriteDataFrameToCsv().write(total_number_per_song, file_dir)
         FileCloser().close(file_handle)
+        return total_number_per_song.to_csv()
