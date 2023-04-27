@@ -1,9 +1,10 @@
 from uuid import uuid4
 
 from csv_api.models import CSVTask
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.text import slugify
+import os
 
 
 @receiver(post_save, sender=CSVTask)

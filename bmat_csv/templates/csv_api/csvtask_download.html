@@ -1,0 +1,21 @@
+{
+{% for key, value in data.items %}
+{{ key }} : {{ value }} ,
+{% endfor %}
+}
+
+{% if data.status %}
+
+<h5 style="font-size:2rem;">
+
+    Your file convertion is: {{data.status}}
+    {% if data.status == "COMPLETED" %}
+
+    Download your file <a style="font-weight: bold" href="{{data.file}}" download>here</a>
+    {% else %}
+    Wait a second until your file is ready
+    {% endif %}
+
+</h5>
+
+{% endif %}
