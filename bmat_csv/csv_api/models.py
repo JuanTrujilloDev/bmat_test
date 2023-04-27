@@ -12,7 +12,7 @@ import time
 
 class CSVTask(models.Model):
     file = models.FileField(
-        upload_to="media/csv_files",
+        upload_to="csv_files",
         blank=False,
         null=False,
         validators=[FileExtensionValidator(["csv", "txt"])],
@@ -20,9 +20,15 @@ class CSVTask(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
     task_id = models.SlugField(max_length=255, null=True, blank=True)
+    status = models.CharField(max_length=15, default="PENDING")
 
     def __str__(self):
         return f"Task: {self.task_id}"
+    
+    def delete(self, *args, **kwargs):
+        """Deletes the file from the server"""
+        os.remove(self.file.path)
+        super().delete(*args, **kwargs)
 
     def convert_csv(self):
         """Converts the file to a CSV file"""
@@ -32,7 +38,10 @@ class CSVTask(models.Model):
         os.remove(self.file.path)
         self.file.save(f"songs-output-{self.task_id}.csv", new_csv)
         self.completed_at = now()
+        self.status = "COMPLETED"
         self.save()
+
+
 
  
 

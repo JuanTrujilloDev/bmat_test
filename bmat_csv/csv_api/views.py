@@ -4,6 +4,8 @@ from channels.db import database_sync_to_async
 from csv_api import models, serializers
 from rest_framework import mixins, permissions, status
 from rest_framework.response import Response
+from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
+from csv_api.renderers import CustomRenderer
 import os
 import threading
 
@@ -67,3 +69,26 @@ class CSVTaskListOrCreateView(mixins.CreateModelMixin, mixins.ListModelMixin, AP
             return Response(response, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class CSVTaskDownloadView(APIView):
+    template_name = "csv_api/csvtask_download.html"
+    renderer_classes  = [JSONRenderer, CustomRenderer]
+
+    async def get(self, request, *args, **kwargs):
+        task = await self.get_object()
+        
+        if task:
+            serializer = serializers.CSVTaskGetSerializer(task)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+            
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    @database_sync_to_async
+    def get_object(self):
+        try:
+            return models.CSVTask.objects.get(task_id=self.kwargs["task_id"])
+
+        except models.CSVTask.DoesNotExist:
+            return None

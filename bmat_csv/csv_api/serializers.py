@@ -11,6 +11,7 @@ class CSVTaskGetSerializer(serializers.ModelSerializer):
             "file",
             "created_at",
             "completed_at",
+            "status",
         ]
 
 
